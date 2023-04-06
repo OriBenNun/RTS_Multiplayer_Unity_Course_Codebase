@@ -2,6 +2,9 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+// using UnityEngine.InputSystem;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -33,11 +36,11 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!hasAuthority) { return; }
 
-        if (!Input.GetMouseButtonDown(1)) { return; }
+        if (!Mouse.current.rightButton.wasPressedThisFrame) { return; }
         
         // So the player clicked
 
-        var ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        var ray = _mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (!Physics.Raycast(ray, out var hit, Mathf.Infinity)) { return; }
         
