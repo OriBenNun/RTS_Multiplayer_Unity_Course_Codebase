@@ -6,6 +6,7 @@ namespace Networking
     public class RtsNetworkManager : NetworkManager
     {
 
+        [Header("Additional Custom Settings")]
         [SerializeField] private GameObject unitSpawnerPrefab;
         public override void OnServerAddPlayer(NetworkConnection conn)
         {
