@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Mirror;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,11 +6,11 @@ namespace Units
 {
     public class UnitSelectionHandler : MonoBehaviour
     {
-        [SerializeField] private LayerMask layerMask = new LayerMask();
+        [SerializeField] private LayerMask layerMask;
         
         private Camera _mainCamera;
 
-        private List<Unit> _selectedUnits = new List<Unit>();
+        public List<Unit> SelectedUnits { get; } = new List<Unit>();
         
         private void Start()
         {
@@ -42,9 +40,9 @@ namespace Units
 
             if (!unit.hasAuthority) { return; }
             
-            _selectedUnits.Add(unit);
+            SelectedUnits.Add(unit);
 
-            foreach (var selectedUnit in _selectedUnits)
+            foreach (var selectedUnit in SelectedUnits)
             {
                 selectedUnit.Select();
             }
@@ -52,12 +50,12 @@ namespace Units
 
         private void DeselectAllUnits()
         {
-            foreach (var selectedUnit in _selectedUnits)
+            foreach (var selectedUnit in SelectedUnits)
             {
                 selectedUnit.Deselect();
             }
             
-            _selectedUnits.Clear();
+            SelectedUnits.Clear();
         }
     }
 }

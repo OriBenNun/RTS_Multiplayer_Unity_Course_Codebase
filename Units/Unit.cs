@@ -6,9 +6,12 @@ namespace Units
 {
     public class Unit : NetworkBehaviour
     {
+        [SerializeField] private UnitMovement unitMovement;
         [SerializeField] private UnityEvent onSelected = null;
         [SerializeField] private UnityEvent onDeselected = null;
 
+        public UnitMovement GetUnitMovement() { return unitMovement; }
+        
         #region Client
         
         [Client]
