@@ -17,6 +17,7 @@ namespace Units
         private Vector2 _startPosition;
         private bool _isPlayerNull;
 
+        public List<Unit> SelectedUnits { get; } = new List<Unit>();
         
         private void Start()
         {
@@ -49,8 +50,11 @@ namespace Units
 
         private void StartSelectionArea()
         {
-            DeselectAllUnits();
-            
+            if (!Keyboard.current.leftShiftKey.isPressed && !Keyboard.current.leftCtrlKey.isPressed)
+            {
+                DeselectUnits();
+            }
+
             unitSelectionArea.gameObject.SetActive(true);
 
             _startPosition = Mouse.current.position.ReadValue();
@@ -71,6 +75,7 @@ namespace Units
 
         private void ClearSelectionArea()
         {
+            var isDeselecting = Keyboard.current.leftCtrlKey.isPressed;
             
             unitSelectionArea.gameObject.SetActive(false);
 
@@ -84,6 +89,12 @@ namespace Units
                 if (!hit.collider.TryGetComponent<Unit>(out var unit)) { return; }
 
                 if (!unit.hasAuthority) { return; }
+
+                if (isDeselecting)
+                {
+                    DeselectUnits(unit);
+                    return;
+                }
             
                 SelectedUnits.Add(unit);
 
@@ -102,21 +113,31 @@ namespace Units
             
             foreach (var unit in playerUnits)
             {
+                if (SelectedUnits.Contains(unit) && !isDeselecting) { continue; }
+
                 var unitScreenPos = _mainCamera.WorldToScreenPoint(unit.transform.position);
 
-                if (unitScreenPos.x > min.x &&
-                    unitScreenPos.x < max.x &&
-                    unitScreenPos.y > min.y &&
-                    unitScreenPos.y < max.y)
+                var inSelectionBox = unitScreenPos.x > min.x &&
+                                     unitScreenPos.x < max.x &&
+                                     unitScreenPos.y > min.y &&
+                                     unitScreenPos.y < max.y;
+
+                switch (inSelectionBox)
                 {
-                    SelectedUnits.Add(unit);
-                    unit.Select();
+                    case true when isDeselecting:
+                        SelectedUnits.Remove(unit);
+                        unit.Deselect();
+                        break;
+                    case true:
+                        SelectedUnits.Add(unit);
+                        unit.Select();
+                        break;
                 }
             }
 
         }
 
-        private void DeselectAllUnits()
+        private void DeselectUnits()
         {
             foreach (var selectedUnit in SelectedUnits)
             {
@@ -125,6 +146,20 @@ namespace Units
             
             SelectedUnits.Clear();
         }
-        public List<Unit> SelectedUnits { get; } = new List<Unit>();
+        
+        private void DeselectUnits(Unit unit)
+        {
+            unit.Deselect();
+            SelectedUnits.Remove(unit);
+        }
+        
+        // private void DeselectUnits(List<Unit> units)
+        // {
+        //     foreach (var selectedUnit in units)
+        //     {
+        //         selectedUnit.Deselect();
+        //         SelectedUnits.Remove(selectedUnit);
+        //     }
+        // }
     }
 }
