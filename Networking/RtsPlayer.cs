@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using Mirror;
 using Units;
-using UnityEngine;
 
 namespace Networking
 {
     public class RtsPlayer : NetworkBehaviour
     {
-        [SerializeField] private List<Unit> _myUnits = new List<Unit>();
+        private List<Unit> _myUnits = new List<Unit>();
 
         public List<Unit> GetPlayerUnits() => _myUnits;
 
