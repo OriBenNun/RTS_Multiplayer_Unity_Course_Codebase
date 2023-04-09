@@ -29,28 +29,24 @@ namespace Combat
             transform.rotation =
                 Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            if (Time.time > (1 / fireRate) + _lastFireTime)
-            {
-                var spawnPosition = projectileSpawnPoint.position;
-                var projectileRotation =
-                    Quaternion.LookRotation(target.GetAimAtPoint().position -
-                                            spawnPosition);
+            if (!(Time.time > (1 / fireRate) + _lastFireTime)) return;
+            
+            var spawnPosition = projectileSpawnPoint.position;
+            var projectileRotation =
+                Quaternion.LookRotation(target.GetAimAtPoint().position -
+                                        spawnPosition);
 
-                var projectileInstance =
-                    Instantiate(projectilePrefab, spawnPosition, projectileRotation);
+            var projectileInstance =
+                Instantiate(projectilePrefab, spawnPosition, projectileRotation);
                 
-                NetworkServer.Spawn(projectileInstance, connectionToClient);
+            NetworkServer.Spawn(projectileInstance, connectionToClient);
 
-                _lastFireTime = Time.time;
-            }
+            _lastFireTime = Time.time;
         }
 
         [Server]
         private bool CanFireAtTarget(Component target)
         {
-            Debug.Log((target.transform.position - transform.position).sqrMagnitude <=
-                      fireRange * fireRange);
-            
             return (target.transform.position - transform.position).sqrMagnitude <=
                    fireRange * fireRange; // To avoid using Vector3.Distance, which uses sqrRoot which is very expensive
 
