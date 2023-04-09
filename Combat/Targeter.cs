@@ -5,8 +5,10 @@ namespace Combat
 {
     public class Targeter : NetworkBehaviour
     {
-
         private Targetable _target;
+        private bool _hasTarget = false;
+
+        public bool GetHasTarget() => _hasTarget;
 
         public Targetable GetTarget() => _target;
 
@@ -17,11 +19,16 @@ namespace Combat
         {
             if (!targetGameObject.TryGetComponent<Targetable>(out var target)) { return; }
 
+            _hasTarget = true;
             _target = target;
         }
 
         [Server]
-        public void ClearTarget() => _target = null;
+        public void ClearTarget()
+        {
+            _hasTarget = false;
+            _target = null;
+        }
 
         #endregion
 

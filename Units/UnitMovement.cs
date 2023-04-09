@@ -10,12 +10,27 @@ namespace Units
     {
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private Targeter targeter;
+        [SerializeField] private float chaseTargetRange = 10f;
         
         #region Server
 
         [ServerCallback]
         private void Update()
         {
+            if (targeter.GetHasTarget())
+            {
+                var target = targeter.GetTarget();
+                if ((target.transform.position - transform.position).sqrMagnitude > chaseTargetRange * chaseTargetRange) // To avoid using Vector3.Distance, which uses sqrRoot which is very expensive
+                {
+                    agent.SetDestination(target.transform.position);
+                }
+                else if (agent.hasPath)
+                {
+                    agent.ResetPath();
+                }
+                return;
+            }
+            
             if (!agent.hasPath) { return; }
             if (agent.remainingDistance > agent.stoppingDistance) { return; }
             
