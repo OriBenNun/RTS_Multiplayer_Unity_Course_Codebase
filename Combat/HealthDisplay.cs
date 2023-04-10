@@ -14,16 +14,22 @@ namespace Combat
 
         private float _lastDisplayOnDamageTime;
         private bool _isMouseOver;
+        private bool _isGameOver;
+        
         private void Awake()
         {
             health.ClientOnHealthUpdated += HandleHealthUpdated;
+            
+            GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
         }
 
         private void OnDestroy()
         {
             health.ClientOnHealthUpdated -= HandleHealthUpdated;
+            
+            GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
         }
-
+        
         private void OnMouseEnter()
         {
             if (!hasAuthority) { return; }
@@ -42,7 +48,13 @@ namespace Combat
             HideHealthBar();
         }
         
-        private void DisplayHealthBar() => healthBarParent.SetActive(true);
+        private void DisplayHealthBar()
+        {
+            if (_isGameOver) { return; }
+            
+            healthBarParent.SetActive(true);
+        }
+
         private void HideHealthBar() => healthBarParent.SetActive(false);
 
         private IEnumerator HideHealthBarAfterWaitTime()
@@ -69,5 +81,13 @@ namespace Combat
 
             StartCoroutine(nameof(HideHealthBarAfterWaitTime));
         }
+
+        [Client]
+        private void ClientHandleGameOver(string winnerId)
+        {
+            HideHealthBar();
+            _isGameOver = true;
+        }
+        
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine;
 public class GameOverHandler : NetworkBehaviour
 {
 
+    public static event Action ServerOnGameOver;
     public static event Action<string> ClientOnGameOver;
     
     private List<PlayerBase> _bases = new List<PlayerBase>();
@@ -42,6 +43,8 @@ public class GameOverHandler : NetworkBehaviour
         var winnerId = _bases[0].connectionToClient.connectionId;
         
         RpcGameOver(winnerId.ToString());
+        
+        ServerOnGameOver?.Invoke();
     }
 
     #endregion
@@ -49,9 +52,9 @@ public class GameOverHandler : NetworkBehaviour
     #region Client
 
     [ClientRpc]
-    private void RpcGameOver(string winner)
+    private void RpcGameOver(string winnerId)
     {
-        ClientOnGameOver?.Invoke(winner);
+        ClientOnGameOver?.Invoke(winnerId);
     }
 
     #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using Buildings;
 using Mirror;
 using UnityEngine;
 
@@ -20,6 +21,13 @@ namespace Combat
         public override void OnStartServer()
         {
             _currentHealth = maxHealth;
+
+            PlayerBase.ServerOnPlayerDie += ServerHandlePlayerDie;
+        }
+
+        public override void OnStopServer()
+        {
+            PlayerBase.ServerOnPlayerDie -= ServerHandlePlayerDie;
         }
 
         [Server]
@@ -32,6 +40,14 @@ namespace Combat
             if (_currentHealth != 0) { return; }
             
             ServerOnDie?.Invoke();
+        }
+
+        [Server]
+        private void ServerHandlePlayerDie(int connectionId)
+        {
+            if (connectionToClient.connectionId != connectionId) { return; }
+            
+            DealDamage(_currentHealth); // Kill the unit if this player is dead
         }
 
         #endregion

@@ -19,6 +19,13 @@ namespace Combat
         public override void OnStartServer()
         {
             Invoke(nameof(DestroySelf), destroyAfterSeconds);
+            
+            GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
+        }
+
+        public override void OnStopServer()
+        {
+            GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
         }
 
         [ServerCallback]
@@ -38,5 +45,8 @@ namespace Combat
 
         [Server]
         private void DestroySelf() => NetworkServer.Destroy(gameObject);
+
+        [Server]
+        private void ServerHandleGameOver() => DestroySelf();
     }
 }
