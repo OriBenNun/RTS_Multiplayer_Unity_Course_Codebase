@@ -23,6 +23,8 @@ namespace Units
         {
             _isPlayerNull = _player == null;
             _mainCamera = Camera.main;
+
+            Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawn;
         }
 
         private void Update()
@@ -48,11 +50,16 @@ namespace Units
             }
         }
 
+        private void OnDestroy()
+        {
+            Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawn;
+        }
+
         private void StartSelectionArea()
         {
             if (!Keyboard.current.leftShiftKey.isPressed && !Keyboard.current.leftCtrlKey.isPressed)
             {
-                DeselectUnits();
+                DeselectAllUnits();
             }
 
             unitSelectionArea.gameObject.SetActive(true);
@@ -92,7 +99,7 @@ namespace Units
 
                 if (isDeselecting)
                 {
-                    DeselectUnits(unit);
+                    DeselectUnit(unit);
                     return;
                 }
             
@@ -137,7 +144,7 @@ namespace Units
 
         }
 
-        private void DeselectUnits()
+        private void DeselectAllUnits()
         {
             foreach (var selectedUnit in SelectedUnits)
             {
@@ -147,19 +154,12 @@ namespace Units
             SelectedUnits.Clear();
         }
         
-        private void DeselectUnits(Unit unit)
+        private void DeselectUnit(Unit unit)
         {
             unit.Deselect();
             SelectedUnits.Remove(unit);
         }
-        
-        // private void DeselectUnits(List<Unit> units)
-        // {
-        //     foreach (var selectedUnit in units)
-        //     {
-        //         selectedUnit.Deselect();
-        //         SelectedUnits.Remove(selectedUnit);
-        //     }
-        // }
+
+        private void AuthorityHandleUnitDespawn(Unit unit) => SelectedUnits.Remove(unit);
     }
 }

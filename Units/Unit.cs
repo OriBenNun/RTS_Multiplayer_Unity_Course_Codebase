@@ -43,15 +43,11 @@ namespace Units
         
         #region Client
 
-        public override void OnStartClient()
-        {
-            if (!isClientOnly || !hasAuthority) { return; } // `!isClientOnly` Prevents the Host from running to avoid duplicated lists
-            
-            AuthorityOnUnitSpawned?.Invoke(this);
-        }
+        public override void OnStartAuthority() => AuthorityOnUnitSpawned?.Invoke(this);
+
         public override void OnStopClient()
         {
-            if (!isClientOnly || !hasAuthority) { return; } // `!isClientOnly` Prevents the Host from running to avoid duplicated lists
+            if (!hasAuthority) { return; } // `!isClientOnly` Prevents the Host from running to avoid duplicated lists
             
             AuthorityOnUnitDespawned?.Invoke(this);
         }
