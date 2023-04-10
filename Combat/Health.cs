@@ -26,13 +26,12 @@ namespace Combat
         public void DealDamage(int damageAmount)
         {
             if (_currentHealth == 0) { return; }
+            
             _currentHealth = Mathf.Max(_currentHealth - damageAmount, 0);
 
             if (_currentHealth != 0) { return; }
             
             ServerOnDie?.Invoke();
-            
-            Debug.Log( this.name + " unit of player number " + connectionToClient.connectionId + " has died!");
         }
 
         #endregion
