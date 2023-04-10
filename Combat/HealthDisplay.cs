@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +12,8 @@ namespace Combat
         [SerializeField] private Image healthBarImage;
         [SerializeField] private float healthBarDisplayTimeAfterDamage = 3.5f;
 
+        private float _lastDisplayOnDamageTime;
+        private bool _isMouseOver;
         private void Awake()
         {
             health.ClientOnHealthUpdated += HandleHealthUpdated;
@@ -25,7 +27,8 @@ namespace Combat
         private void OnMouseEnter()
         {
             if (!hasAuthority) { return; }
-            
+
+            _isMouseOver = true;
             DisplayHealthBar();
         }
         
@@ -33,11 +36,26 @@ namespace Combat
         {
             if (!hasAuthority) { return; }
             
+            _isMouseOver = false;
+            
+            if (Time.time < _lastDisplayOnDamageTime + healthBarDisplayTimeAfterDamage) { return; }
             HideHealthBar();
         }
         
         private void DisplayHealthBar() => healthBarParent.SetActive(true);
         private void HideHealthBar() => healthBarParent.SetActive(false);
+
+        private IEnumerator HideHealthBarAfterWaitTime()
+        {
+            while (Time.time < _lastDisplayOnDamageTime + healthBarDisplayTimeAfterDamage)
+            {
+                yield return new WaitForSeconds(healthBarDisplayTimeAfterDamage / 2);
+            }
+
+            if (_isMouseOver) { yield break; }
+            
+            HideHealthBar();
+        }
 
         private void HandleHealthUpdated(int currentHealth, int maxHealth)
         {
@@ -47,7 +65,9 @@ namespace Combat
             
             DisplayHealthBar();
 
-            Invoke(nameof(HideHealthBar), healthBarDisplayTimeAfterDamage);
+            _lastDisplayOnDamageTime = Time.time;
+
+            StartCoroutine(nameof(HideHealthBarAfterWaitTime));
         }
     }
 }
