@@ -18,7 +18,10 @@ namespace Buildings
         public override void OnStopServer() => health.ServerOnDie -= ServerHandleDie;
 
         [Server]
-        private void ServerHandleDie() => NetworkServer.Destroy(gameObject);
+        private void ServerHandleDie()
+        {
+            // NetworkServer.Destroy(gameObject);
+        }
 
         [Command]
         private void CmdSpawnUnit()
