@@ -8,6 +8,7 @@ namespace Units
 {
     public class Unit : NetworkBehaviour
     {
+        [SerializeField] private Health health;
         [SerializeField] private UnitMovement unitMovement;
         [SerializeField] private Targeter targeter;
         [SerializeField] private UnityEvent onSelected;
@@ -26,12 +27,17 @@ namespace Units
         public override void OnStartServer()
         {
             ServerOnUnitSpawned?.Invoke(this);
+            health.ServerOnDie += ServerHandleDie;
         }
 
         public override void OnStopServer()
         {
             ServerOnUnitDespawned?.Invoke(this);
+            health.ServerOnDie -= ServerHandleDie;
         }
+
+        [Server]
+        private void ServerHandleDie() => NetworkServer.Destroy(gameObject);
 
         #endregion
         
