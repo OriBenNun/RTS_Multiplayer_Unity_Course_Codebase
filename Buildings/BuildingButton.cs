@@ -67,7 +67,7 @@ namespace Buildings
 
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity, floorMask))
             {
-                // TODO place building
+                _player.CmdTryPlaceBuilding(building.GetId(), hit.point);
             }
 
             _isBuildingPreviewInstanceNull = true;
