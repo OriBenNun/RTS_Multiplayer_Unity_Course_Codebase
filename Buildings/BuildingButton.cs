@@ -29,7 +29,7 @@ namespace Buildings
             _mainCamera = Camera.main;
 
             iconImage.sprite = building.GetIcon();
-            priceText.text = building.GetPrice().ToString();
+            priceText.text = $"${building.GetPrice()}";
         }
 
         private void Update()
