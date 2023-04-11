@@ -1,5 +1,4 @@
-﻿using System;
-using Mirror;
+﻿using Mirror;
 using Networking;
 using TMPro;
 using UnityEngine;

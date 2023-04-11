@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Buildings;
 using Mirror;
-using UnityEngine;
 
 public class GameOverHandler : NetworkBehaviour
 {

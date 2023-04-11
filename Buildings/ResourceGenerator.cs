@@ -1,5 +1,4 @@
-﻿using System;
-using Combat;
+﻿using Combat;
 using Mirror;
 using Networking;
 using UnityEngine;

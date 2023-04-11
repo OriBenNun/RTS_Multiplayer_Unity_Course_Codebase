@@ -1,7 +1,6 @@
 ﻿using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Networking
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using Inputs;
+﻿using Inputs;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
