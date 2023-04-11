@@ -8,6 +8,7 @@ namespace Units
 {
     public class Unit : NetworkBehaviour
     {
+        [SerializeField] private int resourceCost = 10;
         [SerializeField] private Health health;
         [SerializeField] private UnitMovement unitMovement;
         [SerializeField] private Targeter targeter;
@@ -21,6 +22,7 @@ namespace Units
 
         public UnitMovement GetUnitMovement() => unitMovement;
         public Targeter GetUnitTargeter() => targeter;
+        public int GetResourceCost() => resourceCost;
 
         #region Server
 
