@@ -19,10 +19,12 @@ namespace Buildings
         private RtsPlayer _player;
         private GameObject _buildingPreviewInstance;
         private Renderer _buildingRendererInstance;
+        private BoxCollider _buildingCollider;
         
         private bool _isPlayerNull;
         private bool _isBuildingPreviewInstanceNull = true;
-        
+        private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+
         private void Start()
         {
             _isPlayerNull = _player == null;
@@ -30,6 +32,8 @@ namespace Buildings
 
             iconImage.sprite = building.GetIcon();
             priceText.text = $"${building.GetPrice()}";
+
+            _buildingCollider = building.GetComponent<BoxCollider>();
         }
 
         private void Update()
@@ -51,6 +55,8 @@ namespace Buildings
         {
             if (eventData.button != PointerEventData.InputButton.Left) { return; }
 
+            if (_player.GetResources() < building.GetPrice()) { return; }
+            
             _buildingPreviewInstance = Instantiate(building.GetBuildingPreview());
             _buildingRendererInstance = _buildingPreviewInstance.GetComponentInChildren<Renderer>();
 
@@ -86,6 +92,10 @@ namespace Buildings
             {
                 _buildingPreviewInstance.SetActive(true);
             }
+
+            var color = _player.CanPlaceBuilding(_buildingCollider, hit.point) ? Color.green : Color.red;
+            
+            _buildingRendererInstance.material.SetColor(BaseColor, color);
         }
     }
 }

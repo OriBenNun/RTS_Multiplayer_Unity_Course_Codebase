@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Buildings;
 using Mirror;
 using Units;
@@ -9,8 +10,9 @@ namespace Networking
 {
     public class RtsPlayer : NetworkBehaviour
     {
+        [SerializeField] private LayerMask buildingBlockLayer;
+        [SerializeField] private float buildingRangeLimit = 5f;
         [SerializeField] private Building[] buildings = Array.Empty<Building>();
-        
         
         [SyncVar(hook = nameof(ClientHandleResourcesUpdated))]
         private int _resources = 250;
@@ -23,6 +25,22 @@ namespace Networking
         public List<Unit> GetPlayerUnits() => _myUnits;
         public List<Building> GetPlayerBuildings() => _myBuildings;
         public int GetResources() => _resources;
+
+        public bool CanPlaceBuilding(BoxCollider buildingCollider, Vector3 pointToPlace)
+        {
+            // Check for collision with blocking layers
+            if (Physics.CheckBox(
+                    pointToPlace + buildingCollider.center,
+                    buildingCollider.size / 2,
+                    Quaternion.identity,
+                    buildingBlockLayer))
+            {
+                return false;
+            }
+
+            // Check for in within range of other player's buildings
+            return _myBuildings.Any(building => (pointToPlace - building.transform.position).sqrMagnitude <= buildingRangeLimit * buildingRangeLimit);
+        }
 
         #region Server
         
@@ -50,22 +68,22 @@ namespace Networking
         [Command]
         public void CmdTryPlaceBuilding(int buildingId, Vector3 point)
         {
-            Building buildingToPlace = null;
-
-            foreach (var building in buildings)
-            {
-                if (building.GetId() == buildingId)
-                {
-                    buildingToPlace = building;
-                    break;
-                }
-            }
+            var buildingToPlace = buildings.FirstOrDefault(building => building.GetId() == buildingId);
 
             if (buildingToPlace == null) { return; }
+
+            var price = buildingToPlace.GetPrice();
+            if (_resources < price) { return; }
+
+            var buildingCollider = buildingToPlace.GetComponent<BoxCollider>();
+            
+            if (!CanPlaceBuilding(buildingCollider, point)) { return; }
 
             var buildingInstance = Instantiate(buildingToPlace.gameObject, point, buildingToPlace.transform.rotation);
             
             NetworkServer.Spawn(buildingInstance, connectionToClient);
+            
+            SetResources(_resources - price);
         }
 
         private void ServerHandleUnitSpawned(Unit unit)
