@@ -13,9 +13,10 @@ namespace Networking
         [SerializeField] private LayerMask buildingBlockLayer;
         [SerializeField] private float buildingRangeLimit = 5f;
         [SerializeField] private Building[] buildings = Array.Empty<Building>();
+        [SerializeField] private int startingResources = 300;
         
         [SyncVar(hook = nameof(ClientHandleResourcesUpdated))]
-        private int _resources = 250;
+        private int _resources;
 
         public event Action<int> ClientOnResourcesUpdated;
 
@@ -27,6 +28,7 @@ namespace Networking
         public List<Unit> GetPlayerUnits() => _myUnits;
         public List<Building> GetPlayerBuildings() => _myBuildings;
         public int GetResources() => _resources;
+        public int GetStartingResources() => startingResources;
 
         public bool CanPlaceBuilding(BoxCollider buildingCollider, Vector3 pointToPlace)
         {
