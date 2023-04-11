@@ -18,10 +18,12 @@ namespace Networking
         private int _resources = 250;
 
         public event Action<int> ClientOnResourcesUpdated;
-        
+
+        private Color _teamColor;
         private List<Unit> _myUnits = new List<Unit>();
         private List<Building> _myBuildings = new List<Building>();
-        
+
+        public Color GetTeamColor() => _teamColor;
         public List<Unit> GetPlayerUnits() => _myUnits;
         public List<Building> GetPlayerBuildings() => _myBuildings;
         public int GetResources() => _resources;
@@ -43,10 +45,7 @@ namespace Networking
         }
 
         #region Server
-        
-        [Server]
-        public void SetResources(int newResources) => _resources = newResources;
-        
+
         public override void OnStartServer()
         {
             Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
@@ -64,6 +63,12 @@ namespace Networking
             Building.ServerOnBuildingSpawned -= ServerHandleBuildingSpawned;
             Building.ServerOnBuildingDespawned -= ServerHandleBuildingDespawned;
         }
+        
+        [Server]
+        public void SetResources(int newResources) => _resources = newResources;
+        
+        [Server]
+        public void SetTeamColor(Color newColor) => _teamColor = newColor;
 
         [Command]
         public void CmdTryPlaceBuilding(int buildingId, Vector3 point)
