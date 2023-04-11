@@ -10,14 +10,24 @@ namespace Networking
     public class RtsPlayer : NetworkBehaviour
     {
         [SerializeField] private Building[] buildings = Array.Empty<Building>();
+        
+        
+        [SyncVar(hook = nameof(ClientHandleResourcesUpdated))]
+        private int _resources = 250;
 
+        public event Action<int> ClientOnResourcesUpdated;
+        
         private List<Unit> _myUnits = new List<Unit>();
         private List<Building> _myBuildings = new List<Building>();
-
+        
         public List<Unit> GetPlayerUnits() => _myUnits;
         public List<Building> GetPlayerBuildings() => _myBuildings;
+        public int GetResources() => _resources;
 
         #region Server
+        
+        [Server]
+        public void SetResources(int newResources) => _resources = newResources;
         
         public override void OnStartServer()
         {
@@ -120,6 +130,9 @@ namespace Networking
 
         private void AuthorityHandleBuildingDespawned(Building building) => _myBuildings.Remove(building);
 
+        private void ClientHandleResourcesUpdated(int oldResources, int newResources) => ClientOnResourcesUpdated?.Invoke(newResources);
+
         #endregion
+
     }
 }
