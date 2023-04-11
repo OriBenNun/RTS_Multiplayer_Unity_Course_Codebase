@@ -10,6 +10,7 @@ namespace Networking
 {
     public class RtsPlayer : NetworkBehaviour
     {
+        [SerializeField] private Transform cameraTransform;
         [SerializeField] private LayerMask buildingBlockLayer;
         [SerializeField] private float buildingRangeLimit = 5f;
         [SerializeField] private Building[] buildings = Array.Empty<Building>();
@@ -29,6 +30,7 @@ namespace Networking
         public List<Building> GetPlayerBuildings() => _myBuildings;
         public int GetResources() => _resources;
         public int GetStartingResources() => startingResources;
+        public Transform GetCameraTransform() => cameraTransform;
 
         public bool CanPlaceBuilding(BoxCollider buildingCollider, Vector3 pointToPlace)
         {
