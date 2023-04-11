@@ -6,6 +6,7 @@ namespace Buildings
 {
     public class Building : NetworkBehaviour
     {
+        [SerializeField] private GameObject buildingPreview;
         [SerializeField] private Sprite icon;
         [SerializeField] private int price = 100;
         [SerializeField] private int id = -1;
@@ -16,6 +17,7 @@ namespace Buildings
         public static event Action<Building> AuthorityOnBuildingSpawned;
         public static event Action<Building> AuthorityOnBuildingDespawned;
 
+        public GameObject GetBuildingPreview() => buildingPreview;
         public Sprite GetIcon() => icon;
         public int GetId() => id;
         public int GetPrice() => price;
