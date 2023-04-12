@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -15,12 +16,11 @@ namespace Networking
         [Header("Additional Custom Settings")]
         [SerializeField] private GameObject playerBasePrefab; 
         [SerializeField] private GameOverHandler gameOverHandlerPrefab;
-        
-        
+
         public static event Action ClientOnConnected;
         public static event Action ClientOnDisconnected;
 
-        private bool _isGameInProgress = false;
+        private bool _isGameInProgress;
 
         private const string GameSceneName = "Scene_Map_01";
         
@@ -67,7 +67,9 @@ namespace Networking
             var player = conn.identity.GetComponent<RtsPlayer>();
             
             Players.Add(player);
-            
+
+            player.SetDisplayName($"Player {Players.Count}");
+
             player.SetResources(player.GetStartingResources());
 
             player.SetTeamColor(new Color(

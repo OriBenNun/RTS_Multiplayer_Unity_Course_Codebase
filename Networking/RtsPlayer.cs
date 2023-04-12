@@ -19,15 +19,20 @@ namespace Networking
         [SyncVar(hook = nameof(ClientHandleResourcesUpdated))]
         private int _resources;
         [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
-        private bool _isPartyOwner = false;
+        private bool _isPartyOwner;
+        [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))]
+        private string _displayName;
 
         public event Action<int> ClientOnResourcesUpdated;
+        
         public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
+        public static event Action ClientOnInfoUpdated;
 
         private Color _teamColor;
         private List<Unit> _myUnits = new List<Unit>();
         private List<Building> _myBuildings = new List<Building>();
 
+        public string GetDisplayName() => _displayName;
         public Color GetTeamColor() => _teamColor;
         public List<Unit> GetPlayerUnits() => _myUnits;
         public bool GetIsPartyOwner() => _isPartyOwner;
@@ -78,6 +83,9 @@ namespace Networking
         {
             _isPartyOwner = state;
         }
+
+        [Server]
+        public void SetDisplayName(string newName) => _displayName = newName;
         
         [Server]
         public void SetResources(int newResources) => _resources = newResources;
@@ -168,6 +176,8 @@ namespace Networking
 
         public override void OnStopClient()
         {
+            ClientOnInfoUpdated?.Invoke();
+            
             if (!isClientOnly) { return; }
             
             ((RtsNetworkManager)NetworkManager.singleton).Players.Remove(this);
@@ -197,6 +207,7 @@ namespace Networking
         private void AuthorityHandleBuildingDespawned(Building building) => _myBuildings.Remove(building);
 
         private void ClientHandleResourcesUpdated(int oldResources, int newResources) => ClientOnResourcesUpdated?.Invoke(newResources);
+        private void ClientHandleDisplayNameUpdated(string oldName, string newName) => ClientOnInfoUpdated?.Invoke();
 
         #endregion
 
