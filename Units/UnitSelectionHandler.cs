@@ -15,13 +15,12 @@ namespace Units
         private RtsPlayer _player;
 
         private Vector2 _startPosition;
-        private bool _isPlayerNull;
-
         public List<Unit> SelectedUnits { get; } = new List<Unit>();
         
         private void Start()
         {
-            _isPlayerNull = _player == null;
+            _player = NetworkClient.connection.identity.GetComponent<RtsPlayer>();
+            
             _mainCamera = Camera.main;
 
             Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawn;
@@ -31,13 +30,6 @@ namespace Units
 
         private void Update()
         {
-            // TODO remove after adding the lobby, it's just a temporary solution, later it can be moved to Start
-            if (_isPlayerNull)
-            {
-                _player = NetworkClient.connection.identity.GetComponent<RtsPlayer>();
-                _isPlayerNull = false;
-            }
-            
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 StartSelectionArea();

@@ -21,13 +21,13 @@ namespace Buildings
         private Renderer _buildingRendererInstance;
         private BoxCollider _buildingCollider;
         
-        private bool _isPlayerNull;
         private bool _isBuildingPreviewInstanceNull = true;
         private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
         private void Start()
         {
-            _isPlayerNull = _player == null;
+            _player = NetworkClient.connection.identity.GetComponent<RtsPlayer>();
+            
             _mainCamera = Camera.main;
 
             iconImage.sprite = building.GetIcon();
@@ -38,13 +38,6 @@ namespace Buildings
 
         private void Update()
         {
-            // TODO remove after adding the lobby, it's just a temporary solution, later it can be moved to Start
-            if (_isPlayerNull)
-            {
-                _player = NetworkClient.connection.identity.GetComponent<RtsPlayer>();
-                _isPlayerNull = false;
-            }
-            
             if (_isBuildingPreviewInstanceNull) {return;}
 
             UpdateBuildingPreview();

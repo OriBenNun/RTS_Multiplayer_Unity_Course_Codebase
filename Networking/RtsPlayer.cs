@@ -55,6 +55,8 @@ namespace Networking
 
         public override void OnStartServer()
         {
+            DontDestroyOnLoad(gameObject);
+            
             Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
             Unit.ServerOnUnitDespawned += ServerHandleUnitDespawned;
 
@@ -158,6 +160,8 @@ namespace Networking
         public override void OnStartClient()
         {
             if (NetworkServer.active) { return; }
+            
+            DontDestroyOnLoad(gameObject);
             
             ((RtsNetworkManager)NetworkManager.singleton).Players.Add(this);
         }
