@@ -96,6 +96,11 @@ namespace Buildings
             var color = _player.CanPlaceBuilding(_buildingCollider, hit.point) ? Color.green : Color.red;
             
             _buildingRendererInstance.material.SetColor(BaseColor, color);
+            
+            if (_buildingRendererInstance.materials.Length > 1)
+            {
+                _buildingRendererInstance.materials[1].SetColor(BaseColor, color);
+            }
         }
     }
 }

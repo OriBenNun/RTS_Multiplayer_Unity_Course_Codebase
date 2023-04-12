@@ -31,6 +31,11 @@ namespace Networking
             foreach (var colorRenderer in colorRenderers)
             {
                 colorRenderer.material.SetColor(BaseColor, newColor);
+                
+                if (colorRenderer.materials.Length > 1)
+                {
+                    colorRenderer.materials[1].SetColor(BaseColor, newColor);
+                }
             }
         }
 
