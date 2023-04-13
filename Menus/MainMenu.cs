@@ -68,5 +68,7 @@ namespace Menus
             
             landingPanel.SetActive(false);
         }
+
+        public void QuitGame() => Application.Quit();
     }
 }
