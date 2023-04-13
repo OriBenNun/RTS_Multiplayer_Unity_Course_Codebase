@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mirror;
+using Steamworks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ namespace Networking
         [Header("Additional Custom Settings")]
         [SerializeField] private GameObject playerBasePrefab; 
         [SerializeField] private GameOverHandler gameOverHandlerPrefab;
+        [SerializeField] private bool usingSteam;
 
         public static event Action ClientOnConnected;
         public static event Action ClientOnDisconnected;
@@ -68,7 +70,7 @@ namespace Networking
             
             Players.Add(player);
 
-            player.SetDisplayName($"Player {Players.Count}");
+            player.SetDisplayName(usingSteam ? SteamFriends.GetPersonaName() : $"Player {Players.Count}");
 
             player.SetResources(player.GetStartingResources());
 
